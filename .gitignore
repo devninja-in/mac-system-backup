@@ -1,0 +1,23 @@
+node_modules/
+dist/
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude Code local config
+.claude/
+
+# Environment / secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12

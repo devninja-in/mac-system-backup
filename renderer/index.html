@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+  <title>System Backup Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="titlebar-spacer"></div>
+  <div class="container">
+    <h1>System Backup</h1>
+
+    <section class="card">
+      <h2>Backup Destination</h2>
+      <div class="dest-row">
+        <button id="choose-dest">Choose destination folder</button>
+        <span id="dest-path" class="path-label">No destination selected</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Files &amp; Folders</h2>
+      <div class="btn-row">
+        <button id="add-folder">Add folder</button>
+        <button id="add-file">Add file</button>
+      </div>
+      <ul id="sources-list" class="source-list"></ul>
+      <p id="sources-empty" class="hint">No sources added yet.</p>
+    </section>
+
+    <section class="card">
+      <h2>Dotfiles &amp; Configs</h2>
+      <div id="dotfiles-grid" class="dotfiles-grid"></div>
+      <p id="dotfiles-empty" class="hint">Checking for dotfiles&hellip;</p>
+    </section>
+
+    <section class="card">
+      <label class="check-row">
+        <input type="checkbox" id="capture-software" checked>
+        <span>Capture installed software list</span>
+      </label>
+      <label class="check-row" style="margin-top: 8px;">
+        <input type="checkbox" id="create-tar" checked>
+        <span>Create tar archive (zstd compressed)</span>
+      </label>
+    </section>
+
+    <section class="card action-card">
+      <button id="start-backup" class="btn-primary" disabled>Start backup</button>
+    </section>
+
+    <section id="log-section" class="card log-card hidden">
+      <h2>Log</h2>
+      <div id="log-area" class="log-area"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

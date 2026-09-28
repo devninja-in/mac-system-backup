@@ -1,0 +1,230 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  background: #f0f0f0;
+  color: #1d1d1f;
+  line-height: 1.5;
+}
+
+.titlebar-spacer {
+  height: 40px;
+  -webkit-app-region: drag;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #86868b;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.08);
+}
+
+.action-card {
+  text-align: center;
+}
+
+.log-card {
+  padding-bottom: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ---------- buttons ---------- */
+button {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border: 1px solid #d2d2d7;
+  border-radius: 7px;
+  background: #fff;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+button:hover {
+  background: #f5f5f7;
+}
+
+button:active {
+  background: #e8e8ed;
+}
+
+.btn-primary {
+  background: #0071e3;
+  color: #fff;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px 0;
+  width: 100%;
+  border-radius: 10px;
+}
+
+.btn-primary:hover {
+  background: #0077ed;
+}
+
+.btn-primary:disabled {
+  background: #b0b0b5;
+  cursor: default;
+}
+
+/* ---------- destination ---------- */
+.dest-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.path-label {
+  font-size: 13px;
+  color: #86868b;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.path-label.active {
+  color: #1d1d1f;
+}
+
+/* ---------- sources list ---------- */
+.btn-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.source-list {
+  list-style: none;
+}
+
+.source-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  margin-top: 6px;
+  background: #f5f5f7;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Menlo', monospace;
+}
+
+.source-list li span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.remove-btn {
+  flex-shrink: 0;
+  background: none !important;
+  border: none !important;
+  color: #ff3b30;
+  font-size: 20px;
+  line-height: 1;
+  padding: 0 2px !important;
+  cursor: pointer;
+}
+
+.hint {
+  font-size: 12px;
+  color: #86868b;
+  margin-top: 4px;
+}
+
+/* ---------- dotfiles ---------- */
+.dotfiles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 6px 12px;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.check-row input[type="checkbox"],
+.dotfiles-grid label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #0071e3;
+  cursor: pointer;
+}
+
+.dotfiles-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  cursor: pointer;
+}
+
+/* ---------- log ---------- */
+.log-area {
+  background: #1a1a1a;
+  color: #e0e0e0;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  font-size: 11.5px;
+  line-height: 1.6;
+  padding: 14px 16px;
+  border-radius: 0 0 12px 12px;
+  margin: 10px -20px 0;
+  height: 320px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.log-area .log-warn {
+  color: #ffd60a;
+}
+
+.log-area .log-err {
+  color: #ff453a;
+}
+
+.log-area .log-ok {
+  color: #30d158;
+}

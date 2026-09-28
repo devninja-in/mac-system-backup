@@ -1,0 +1,12 @@
+{
+  "name": "system-backup-tool",
+  "version": "1.0.0",
+  "description": "macOS backup tool for pre-reset backup and restore",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.0.0"
+  }
+}
