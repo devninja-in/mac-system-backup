@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-async function generateRestore(backupDir, hasSoftwareCapture, hasTar, sendLog) {
+async function generateRestore(backupDir, hasSoftwareCapture, hasTar, hasPassword, sendLog) {
   sendLog('\n--- Generating restore files ---');
 
   const manifestDir = path.join(backupDir, 'manifest');
@@ -9,7 +9,7 @@ async function generateRestore(backupDir, hasSoftwareCapture, hasTar, sendLog) {
   const hasVSCodeExts = hasSoftwareCapture && fs.existsSync(path.join(manifestDir, 'vscode-extensions.txt'));
 
   writeRestoreScript(backupDir, hasBrewfile, hasVSCodeExts, sendLog);
-  writeRestoreSteps(backupDir, hasBrewfile, hasVSCodeExts, hasTar, sendLog);
+  writeRestoreSteps(backupDir, hasBrewfile, hasVSCodeExts, hasTar, hasPassword, sendLog);
 
   sendLog('--- Restore files generated ---\n');
 }
@@ -82,7 +82,7 @@ echo "See RESTORE-STEPS.md for manual steps (rebuilding project deps, etc.)"
   sendLog('  RESTORE.sh written');
 }
 
-function writeRestoreSteps(backupDir, hasBrewfile, hasVSCodeExts, hasTar, sendLog) {
+function writeRestoreSteps(backupDir, hasBrewfile, hasVSCodeExts, hasTar, hasPassword, sendLog) {
   let step = 1;
 
   let md = `# Restore Steps\n\n> Generated: ${new Date().toISOString()}\n`;
@@ -90,7 +90,15 @@ function writeRestoreSteps(backupDir, hasBrewfile, hasVSCodeExts, hasTar, sendLo
   if (hasTar) {
     const backupName = path.basename(backupDir);
     md += `\n## ${step}. Extract the tar archive\n\n`;
-    md += `If you have the \`.tar.zst\` archive, extract it first:\n\n`;
+    if (hasPassword) {
+      md += `The archive is password-protected. Decrypt it first:\n\n`;
+      md += '```bash\n';
+      md += `openssl enc -d -aes-256-cbc -pbkdf2 -in ${backupName}.tar.zst.enc -out ${backupName}.tar.zst\n`;
+      md += '```\n\n';
+      md += `Then extract:\n\n`;
+    } else {
+      md += `If you have the \`.tar.zst\` archive, extract it first:\n\n`;
+    }
     md += '```bash\n';
     md += `tar --zstd -xvpf ${backupName}.tar.zst\n`;
     md += '```\n\n';

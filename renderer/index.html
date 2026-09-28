@@ -44,6 +44,13 @@
         <input type="checkbox" id="create-tar" checked>
         <span>Create tar archive (zstd compressed)</span>
       </label>
+      <div id="password-row" class="password-row">
+        <label for="archive-password">Archive password:</label>
+        <div class="password-input-wrap">
+          <input type="password" id="archive-password" placeholder="Leave empty for no encryption">
+          <button type="button" id="toggle-password" class="toggle-pw-btn" tabindex="-1">Show</button>
+        </div>
+      </div>
     </section>
 
     <section class="card action-card">

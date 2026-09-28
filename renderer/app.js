@@ -13,6 +13,9 @@ const dotfilesGrid = document.getElementById('dotfiles-grid');
 const dotfilesEmpty = document.getElementById('dotfiles-empty');
 const captureSoftware = document.getElementById('capture-software');
 const createTar = document.getElementById('create-tar');
+const passwordRow = document.getElementById('password-row');
+const archivePassword = document.getElementById('archive-password');
+const togglePasswordBtn = document.getElementById('toggle-password');
 const startBtn = document.getElementById('start-backup');
 const logSection = document.getElementById('log-section');
 const logArea = document.getElementById('log-area');
@@ -68,6 +71,17 @@ async function initDotfiles() {
 
 initDotfiles();
 
+createTar.addEventListener('change', () => {
+  passwordRow.classList.toggle('hidden', !createTar.checked);
+  if (!createTar.checked) archivePassword.value = '';
+});
+
+togglePasswordBtn.addEventListener('click', () => {
+  const showing = archivePassword.type === 'text';
+  archivePassword.type = showing ? 'password' : 'text';
+  togglePasswordBtn.textContent = showing ? 'Show' : 'Hide';
+});
+
 destBtn.addEventListener('click', async () => {
   const chosen = await backupApi.chooseDestination();
   if (chosen) {
@@ -98,6 +112,8 @@ function setUIEnabled(enabled) {
   addFileBtn.disabled = !enabled;
   captureSoftware.disabled = !enabled;
   createTar.disabled = !enabled;
+  archivePassword.disabled = !enabled;
+  togglePasswordBtn.disabled = !enabled;
   dotfilesGrid.querySelectorAll('input').forEach(cb => cb.disabled = !enabled);
   sourcesList.querySelectorAll('.remove-btn').forEach(b => b.disabled = !enabled);
 }
@@ -120,6 +136,7 @@ startBtn.addEventListener('click', async () => {
     dotfiles: selectedDotfiles,
     captureSoftwareFlag: captureSoftware.checked,
     createTarFlag: createTar.checked,
+    archivePassword: createTar.checked ? archivePassword.value : '',
   });
 });
 

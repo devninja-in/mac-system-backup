@@ -66,10 +66,16 @@ ipcMain.handle('add-file', async () => {
 ipcMain.handle('get-existing-dotfiles', () => {
   const home = os.homedir();
   const candidates = [
-    '.zshrc', '.bashrc', '.bash_profile', '.gitconfig', '.vimrc',
+    '.zshrc', '.bashrc', '.bash_profile', '.vimrc',
     '.ssh', '.gnupg', '.aws', '.kube', '.config',
     '.claude', '.cursor',
   ];
+
+  const allFiles = fs.readdirSync(home);
+  allFiles
+    .filter(f => f.startsWith('.gitconfig'))
+    .forEach(f => { if (!candidates.includes(f)) candidates.unshift(f); });
+
   return candidates.filter(f => {
     try {
       fs.accessSync(path.join(home, f));
@@ -117,8 +123,46 @@ function createTarArchive(backupDir, backupName, destination, sendLog) {
   });
 }
 
+function encryptFile(tarFile, password, sendLog) {
+  return new Promise((resolve) => {
+    const encFile = tarFile + '.enc';
+    sendLog('--- Encrypting archive (AES-256-CBC) ---');
+    sendLog(`  Encrypted file: ${encFile}`);
+
+    const { spawn } = require('child_process');
+    const proc = spawn('openssl', [
+      'enc', '-aes-256-cbc', '-salt', '-pbkdf2',
+      '-in', tarFile, '-out', encFile, '-pass', 'stdin',
+    ]);
+
+    proc.stdin.write(password);
+    proc.stdin.end();
+
+    proc.stderr.on('data', (data) => {
+      const msg = data.toString().trim();
+      if (msg) sendLog(`  [openssl] ${msg}`);
+    });
+
+    proc.on('close', (code) => {
+      if (code === 0) {
+        try { fs.unlinkSync(tarFile); } catch { /* ignore */ }
+        sendLog('--- Archive encrypted (unencrypted tar removed) ---\n');
+        resolve(encFile);
+      } else {
+        sendLog(`  openssl exited with code ${code}`);
+        resolve(null);
+      }
+    });
+
+    proc.on('error', (err) => {
+      sendLog(`  Failed to encrypt archive: ${err.message}`);
+      resolve(null);
+    });
+  });
+}
+
 ipcMain.handle('start-backup', async (_event, config) => {
-  const { destination, sources, dotfiles, captureSoftwareFlag, createTarFlag } = config;
+  const { destination, sources, dotfiles, captureSoftwareFlag, createTarFlag, archivePassword } = config;
 
   const sendLog = (msg) => {
     if (mainWindow && !mainWindow.isDestroyed()) {
@@ -148,11 +192,16 @@ ipcMain.handle('start-backup', async (_event, config) => {
       await captureSoftware(manifestDir, sendLog);
     }
 
-    await generateRestore(backupDir, captureSoftwareFlag, createTarFlag, sendLog);
+    await generateRestore(backupDir, captureSoftwareFlag, createTarFlag, !!archivePassword, sendLog);
 
-    let tarPath = null;
+    let archivePath = null;
     if (createTarFlag) {
-      tarPath = await createTarArchive(backupDir, backupName, destination, sendLog);
+      const tarPath = await createTarArchive(backupDir, backupName, destination, sendLog);
+      if (tarPath && archivePassword) {
+        archivePath = await encryptFile(tarPath, archivePassword, sendLog);
+      } else {
+        archivePath = tarPath;
+      }
     }
 
     const { execFileSync } = require('child_process');
@@ -165,13 +214,16 @@ ipcMain.handle('start-backup', async (_event, config) => {
     sendLog(`\n========================================`);
     sendLog(`Backup complete! Total size: ${size}`);
     sendLog(`Location: ${backupDir}`);
-    if (tarPath) {
-      let tarSize = 'unknown';
+    if (archivePath) {
+      let archiveSize = 'unknown';
       try {
-        const out = execFileSync('du', ['-sh', tarPath], { encoding: 'utf8' }).trim();
-        tarSize = out.split('\t')[0];
+        const out = execFileSync('du', ['-sh', archivePath], { encoding: 'utf8' }).trim();
+        archiveSize = out.split('\t')[0];
       } catch { /* ignore */ }
-      sendLog(`Archive: ${tarPath} (${tarSize})`);
+      sendLog(`Archive: ${archivePath} (${archiveSize})`);
+      if (archivePassword) {
+        sendLog(`Archive is password-protected (AES-256-CBC)`);
+      }
     }
     sendLog(`========================================`);
 

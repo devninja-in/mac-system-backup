@@ -201,6 +201,49 @@ button:active {
   cursor: pointer;
 }
 
+/* ---------- password ---------- */
+.password-row {
+  margin-top: 10px;
+  padding-left: 24px;
+}
+
+.password-row label {
+  font-size: 13px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.password-input-wrap {
+  display: flex;
+  gap: 6px;
+}
+
+.password-input-wrap input {
+  flex: 1;
+  font-family: 'SF Mono', 'Menlo', monospace;
+  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid #d2d2d7;
+  border-radius: 7px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.password-input-wrap input:focus {
+  border-color: #0071e3;
+}
+
+.toggle-pw-btn {
+  font-size: 12px !important;
+  padding: 6px 10px !important;
+  min-width: 50px;
+}
+
+.password-row.hidden {
+  display: none;
+}
+
 /* ---------- log ---------- */
 .log-area {
   background: #1a1a1a;
