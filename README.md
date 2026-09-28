@@ -86,7 +86,23 @@ cd mac-backup-YYYYMMDD-HHMMSS
 sudo ./RESTORE.sh
 ```
 
-### Option 3: Manual restore
+### Option 3: Extract from password-protected archive (.enc)
+
+If the backup was created with a password, decrypt it first, then extract:
+
+```bash
+# Decrypt the archive (will prompt for the password)
+openssl enc -d -aes-256-cbc -pbkdf2 -in mac-backup-YYYYMMDD-HHMMSS.tar.zst.enc -out mac-backup-YYYYMMDD-HHMMSS.tar.zst
+
+# Extract the decrypted archive
+tar --zstd -xvpf mac-backup-YYYYMMDD-HHMMSS.tar.zst
+
+# Run the restore script
+cd mac-backup-YYYYMMDD-HHMMSS
+sudo ./RESTORE.sh
+```
+
+### Option 4: Manual restore
 
 ```bash
 # Restore files
